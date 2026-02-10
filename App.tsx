@@ -21,8 +21,6 @@ const App: React.FC = () => {
   const [user, setUser] = useState<User>(MOCK_USER);
 
   useEffect(() => {
-    console.log("QuestNet: App inicializada.");
-    
     const checkAuth = async () => {
       try {
         const sessionUser = await AuthService.getCurrentUser();
@@ -31,8 +29,9 @@ const App: React.FC = () => {
           await fetchUserProfile(sessionUser.id, sessionUser.phone);
         }
       } catch (e) {
-        console.error("QuestNet: Error en sesión inicial:", e);
+        console.warn("QuestNet: No hay sesión activa.");
       } finally {
+        // Reducimos el tiempo de espera al mínimo para evitar bloqueos visuales
         setIsInitializing(false);
       }
     };
@@ -51,11 +50,12 @@ const App: React.FC = () => {
   }, []);
 
   const fetchUserProfile = async (id: string, phone?: string) => {
+    setIsSyncing(true);
     const { data, error } = await supabase.from('profiles').select('*').eq('id', id).single();
     if (data && !error) {
       setUser({
         id: data.id,
-        name: data.name || 'Usuario',
+        name: data.name || 'Explorador',
         username: data.username || '@user',
         avatar: data.avatar || MOCK_USER.avatar,
         level: data.level || 1,
@@ -69,6 +69,7 @@ const App: React.FC = () => {
         plin_number: data.plin_number
       });
     }
+    setIsSyncing(false);
   };
 
   const navigateTo = (view: AppView) => {
@@ -76,17 +77,12 @@ const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (isInitializing) return (
-    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white">
-      <Loader2 className="animate-spin text-blue-500 mb-4" size={40} />
-      <p className="text-[10px] font-black uppercase tracking-[0.4em]">Sincronizando Perfil...</p>
-    </div>
-  );
+  if (isInitializing) return null; // El loader de index.html se mantiene hasta que React tome el control
 
   if (!isAuthenticated) return <Auth onLogin={() => setIsAuthenticated(true)} />;
 
   return (
-    <div className="flex flex-col min-h-screen max-w-md mx-auto bg-white shadow-2xl relative font-inter">
+    <div className="flex flex-col min-h-screen max-w-md mx-auto bg-white shadow-2xl relative font-inter animate-in fade-in duration-700">
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-100 px-4 py-3 flex justify-between items-center">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigateTo(AppView.DASHBOARD)}>
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
