@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { User, RewardHistory } from '../types';
+import { User, RewardHistory } from '../types.ts';
 import { History, Loader2, CheckCircle2, RefreshCw, ShieldCheck, AlertCircle, Smartphone, Info, ExternalLink, Globe } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase } from '../lib/supabaseClient.ts';
 
 interface EarnSurveysProps {
   user: User;
@@ -88,7 +88,6 @@ const EarnSurveys: React.FC<EarnSurveysProps> = ({ user }) => {
     if (url) window.open(url, '_blank');
   };
 
-  // 1. ESTADO: ERROR DE DESPLIEGUE
   if (error === "LA_FUNCION_NO_ESTA_DESPLEGADA") {
     return (
       <div className="flex flex-col items-center justify-center min-h-[80vh] p-8 text-center bg-white">
@@ -107,7 +106,6 @@ const EarnSurveys: React.FC<EarnSurveysProps> = ({ user }) => {
     );
   }
 
-  // 2. ESTADO: ERROR GENÉRICO
   if (error && !loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[80vh] p-8 text-center bg-white">
@@ -152,7 +150,6 @@ const EarnSurveys: React.FC<EarnSurveysProps> = ({ user }) => {
         
         {secureHash ? (
           <div className="flex flex-col h-full">
-            {/* Si el iframe se ve blanco, este botón permite abrirlo fuera */}
             <div className="p-4 bg-blue-600 flex justify-between items-center text-white">
                 <span className="text-[10px] font-black uppercase tracking-wider">¿No carga la lista?</span>
                 <button 
@@ -180,7 +177,6 @@ const EarnSurveys: React.FC<EarnSurveysProps> = ({ user }) => {
         )}
       </div>
 
-      {/* Guía de ayuda si se ve en blanco */}
       <div className="p-6 bg-slate-50 border-y border-slate-100">
          <div className="flex gap-4 items-start">
             <div className="p-3 bg-white rounded-2xl shadow-sm text-blue-600">
