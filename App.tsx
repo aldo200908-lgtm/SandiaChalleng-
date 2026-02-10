@@ -1,20 +1,20 @@
 
 import React, { useState, useEffect } from 'react';
-import { AppView, User, Challenge } from './types';
-import BottomNav from './components/BottomNav';
-import Dashboard from './views/Dashboard';
-import Challenges from './views/Challenges';
-import UploadProof from './views/UploadProof';
-import Profile from './views/Profile';
-import Wallet from './views/Wallet';
-import AdminPanel from './views/AdminPanel';
-import Chat from './views/Chat';
-import Auth from './views/Auth';
-import EarnSurveys from './views/EarnSurveys';
-import { MOCK_USER, MOCK_CHALLENGES } from './constants';
-import { AuthService } from './services/authService';
+import { AppView, User, Challenge } from './types.ts';
+import BottomNav from './components/BottomNav.tsx';
+import Dashboard from './views/Dashboard.tsx';
+import Challenges from './views/Challenges.tsx';
+import UploadProof from './views/UploadProof.tsx';
+import Profile from './views/Profile.tsx';
+import Wallet from './views/Wallet.tsx';
+import AdminPanel from './views/AdminPanel.tsx';
+import Chat from './views/Chat.tsx';
+import Auth from './views/Auth.tsx';
+import EarnSurveys from './views/EarnSurveys.tsx';
+import { MOCK_USER, MOCK_CHALLENGES } from './constants.tsx';
+import { AuthService } from './services/authService.ts';
 import { Wallet as WalletIcon, RefreshCw, Loader2 } from 'lucide-react';
-import { supabase } from './lib/supabaseClient';
+import { supabase } from './lib/supabaseClient.ts';
 
 const App: React.FC = () => {
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
