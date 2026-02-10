@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { Phone, ArrowRight, Globe, Loader2, Info, KeyRound, ChevronLeft, AlertTriangle } from 'lucide-react';
-import { enviarOTP, verificarOTP } from '../services/authService';
-import { isConfigured } from '../lib/supabaseClient';
-import { User as AppUser } from '../types';
+import { enviarOTP, verificarOTP } from '../services/authService.ts';
+import { isConfigured } from '../lib/supabaseClient.ts';
+import { User as AppUser } from '../types.ts';
 
 interface AuthProps {
   onLogin: (userData?: Partial<AppUser>) => void;

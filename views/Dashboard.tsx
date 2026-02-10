@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { AppView, User, Challenge } from '../types';
+import { AppView, User, Challenge } from '../types.ts';
 import { Trophy, Flame, Target, ChevronRight, Play, Star } from 'lucide-react';
-import AdsContainer from '../components/AdsContainer';
+import AdsContainer from '../components/AdsContainer.tsx';
 
 interface DashboardProps {
   user: User;

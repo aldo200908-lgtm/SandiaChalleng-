@@ -1,5 +1,5 @@
 
-import { supabase } from '../lib/supabaseClient';
+import { supabase } from '../lib/supabaseClient.ts';
 
 /**
  * Envía un código OTP (One-Time Password) al número de teléfono proporcionado.

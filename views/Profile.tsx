@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { User, AppView } from '../types';
+import { User, AppView } from '../types.ts';
 import { Settings, Award, History, Users, Flame, ChevronRight, Share2, Phone, Check, Save, Loader2 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase.ts';
 
 interface ProfileProps {
   user: User;

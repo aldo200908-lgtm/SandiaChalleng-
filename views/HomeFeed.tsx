@@ -1,9 +1,9 @@
 
 import React, { useEffect, useState } from 'react';
-import { AppView } from '../types';
-import { supabase } from '../lib/supabase';
+import { AppView } from '../types.ts';
+import { supabase } from '../lib/supabase.ts';
 import { Heart, MessageCircle, Share2, MoreHorizontal, ExternalLink, Loader2, Sparkles } from 'lucide-react';
-import AdsContainer from '../components/AdsContainer';
+import AdsContainer from '../components/AdsContainer.tsx';
 
 interface HomeFeedProps {
   navigateTo: (view: AppView) => void;

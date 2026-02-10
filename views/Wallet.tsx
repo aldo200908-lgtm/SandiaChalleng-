@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { User, AppView } from '../types';
-import { CONVERSION_RATE, MIN_WITHDRAWAL_LEVEL } from '../constants';
-import { supabase } from '../lib/supabase';
+import { User, AppView } from '../types.ts';
+import { CONVERSION_RATE, MIN_WITHDRAWAL_LEVEL } from '../constants.tsx';
+import { supabase } from '../lib/supabase.ts';
 import { CreditCard, ArrowRightLeft, ShieldCheck, Info, Loader2, AlertCircle, X, CheckCircle2, Phone } from 'lucide-react';
 
 interface WalletProps {

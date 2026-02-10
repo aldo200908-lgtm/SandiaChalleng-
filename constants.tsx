@@ -1,5 +1,5 @@
 
-import { Challenge, User } from './types';
+import { Challenge, User } from './types.ts';
 
 export const MOCK_USER: User = {
   id: 'u1',

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { AppView } from '../types';
-import { supabase } from '../lib/supabase';
+import { AppView } from '../types.ts';
+import { supabase } from '../lib/supabase.ts';
 import { Send, ArrowLeft, Loader2 } from 'lucide-react';
 
 interface ChatProps {

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { LayoutDashboard, Trophy, Wallet, User, CircleDollarSign } from 'lucide-react';
-import { AppView } from '../types';
+import { AppView } from '../types.ts';
 
 interface BottomNavProps {
   currentView: AppView;

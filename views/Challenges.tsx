@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Challenge, ChallengeCategory } from '../types';
+import { Challenge, ChallengeCategory } from '../types.ts';
 import { MapPin, Camera, Zap, Calendar, Search } from 'lucide-react';
 
 interface ChallengesProps {

@@ -1,7 +1,7 @@
 
 import React, { useState, useRef } from 'react';
 import { Camera, MapPin, CheckCircle2, UploadCloud, Database, Gift, Loader2 } from 'lucide-react';
-import { Challenge } from '../types';
+import { Challenge } from '../types.ts';
 
 interface UploadProofProps {
   challenge: Challenge | null;

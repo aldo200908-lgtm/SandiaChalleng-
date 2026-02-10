@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef } from 'react';
-import { ENABLE_ADS } from '../constants';
-import { initAdsterraBanner } from '../lib/adUtils';
+import { ENABLE_ADS } from '../constants.tsx';
+import { initAdsterraBanner } from '../lib/adUtils.ts';
 
 interface AdsContainerProps {
   zoneId?: string;
