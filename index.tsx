@@ -3,8 +3,6 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 
-console.log("QuestNet: Inicializando aplicación...");
-
 const container = document.getElementById('root');
 
 if (container) {
@@ -15,10 +13,27 @@ if (container) {
         <App />
       </React.StrictMode>
     );
-    console.log("QuestNet: Renderizado inicial completado.");
+    
+    // Función para limpiar el loader inicial
+    const removeLoader = () => {
+      const loader = document.getElementById('app-loader');
+      if (loader) {
+        loader.style.opacity = '0';
+        setTimeout(() => loader.remove(), 500);
+      }
+    };
+
+    // Intentamos quitar el loader lo antes posible
+    if (document.readyState === 'complete') {
+      removeLoader();
+    } else {
+      window.addEventListener('load', removeLoader);
+    }
+    
+    // Fallback de seguridad por si el evento load no dispara
+    setTimeout(removeLoader, 2000);
+
   } catch (err) {
-    console.error("QuestNet: Error crítico en el renderizado:", err);
+    console.error("Fallo crítico al montar React:", err);
   }
-} else {
-  console.error("QuestNet: No se encontró el contenedor #root");
 }

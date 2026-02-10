@@ -29,10 +29,13 @@ const App: React.FC = () => {
           await fetchUserProfile(sessionUser.id, sessionUser.phone);
         }
       } catch (e) {
-        console.warn("QuestNet: No hay sesión activa.");
+        console.warn("QuestNet: Usuario no autenticado.");
       } finally {
-        // Reducimos el tiempo de espera al mínimo para evitar bloqueos visuales
+        // Forzamos el fin de la carga de sistema
         setIsInitializing(false);
+        // Quitamos el loader de HTML puro para que no tape la app
+        const staticLoader = document.getElementById('app-loader');
+        if (staticLoader) staticLoader.remove();
       }
     };
 
@@ -51,25 +54,30 @@ const App: React.FC = () => {
 
   const fetchUserProfile = async (id: string, phone?: string) => {
     setIsSyncing(true);
-    const { data, error } = await supabase.from('profiles').select('*').eq('id', id).single();
-    if (data && !error) {
-      setUser({
-        id: data.id,
-        name: data.name || 'Explorador',
-        username: data.username || '@user',
-        avatar: data.avatar || MOCK_USER.avatar,
-        level: data.level || 1,
-        exp: data.exp || 0,
-        points: data.points || 0,
-        walletBalance: Number(data.wallet_balance) || 0,
-        streak: data.streak || 0,
-        isAdmin: false,
-        phone: phone || data.phone,
-        yape_number: data.yape_number,
-        plin_number: data.plin_number
-      });
+    try {
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', id).single();
+      if (data && !error) {
+        setUser({
+          id: data.id,
+          name: data.name || 'Explorador',
+          username: data.username || '@user',
+          avatar: data.avatar || MOCK_USER.avatar,
+          level: data.level || 1,
+          exp: data.exp || 0,
+          points: data.points || 0,
+          walletBalance: Number(data.wallet_balance) || 0,
+          streak: data.streak || 0,
+          isAdmin: false,
+          phone: phone || data.phone,
+          yape_number: data.yape_number,
+          plin_number: data.plin_number
+        });
+      }
+    } catch (e) {
+      console.error("Error al obtener perfil:", e);
+    } finally {
+      setIsSyncing(false);
     }
-    setIsSyncing(false);
   };
 
   const navigateTo = (view: AppView) => {
@@ -77,12 +85,12 @@ const App: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (isInitializing) return null; // El loader de index.html se mantiene hasta que React tome el control
+  if (isInitializing) return null;
 
   if (!isAuthenticated) return <Auth onLogin={() => setIsAuthenticated(true)} />;
 
   return (
-    <div className="flex flex-col min-h-screen max-w-md mx-auto bg-white shadow-2xl relative font-inter animate-in fade-in duration-700">
+    <div className="flex flex-col min-h-screen max-w-md mx-auto bg-white shadow-2xl relative font-inter animate-in fade-in duration-500">
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-100 px-4 py-3 flex justify-between items-center">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigateTo(AppView.DASHBOARD)}>
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
