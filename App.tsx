@@ -4,11 +4,8 @@ import { AppView, User, Challenge } from './types.ts';
 import BottomNav from './components/BottomNav.tsx';
 import Dashboard from './views/Dashboard.tsx';
 import Challenges from './views/Challenges.tsx';
-import UploadProof from './views/UploadProof.tsx';
 import Profile from './views/Profile.tsx';
 import Wallet from './views/Wallet.tsx';
-import AdminPanel from './views/AdminPanel.tsx';
-import Chat from './views/Chat.tsx';
 import Auth from './views/Auth.tsx';
 import EarnSurveys from './views/EarnSurveys.tsx';
 import { MOCK_USER, MOCK_CHALLENGES } from './constants.tsx';
@@ -22,10 +19,24 @@ const App: React.FC = () => {
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [currentView, setCurrentView] = useState<AppView>(AppView.DASHBOARD);
   const [user, setUser] = useState<User>(MOCK_USER);
-  const [completedChallengeIds, setCompletedChallengeIds] = useState<string[]>([]);
-  const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null);
 
   useEffect(() => {
+    console.log("QuestNet: App inicializada.");
+    
+    const checkAuth = async () => {
+      try {
+        const sessionUser = await AuthService.getCurrentUser();
+        if (sessionUser) {
+          setIsAuthenticated(true);
+          await fetchUserProfile(sessionUser.id, sessionUser.phone);
+        }
+      } catch (e) {
+        console.error("QuestNet: Error en sesión inicial:", e);
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
         setIsAuthenticated(true);
@@ -33,39 +44,11 @@ const App: React.FC = () => {
       } else {
         setIsAuthenticated(false);
       }
-      setIsInitializing(false);
     });
 
-    AuthService.getCurrentUser().then(sessionUser => {
-      if (sessionUser) {
-        setIsAuthenticated(true);
-        fetchUserProfile(sessionUser.id, sessionUser.phone);
-      }
-      setTimeout(() => setIsInitializing(false), 1000);
-    });
-
+    checkAuth();
     return () => { subscription.unsubscribe(); };
   }, []);
-
-  useEffect(() => {
-    if (!isAuthenticated || !user.id) return;
-    const profileChannel = supabase
-      .channel(`profile-realtime-${user.id}`)
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${user.id}` },
-        (payload) => {
-          setUser(prev => ({
-            ...prev,
-            points: payload.new.points ?? prev.points,
-            walletBalance: Number(payload.new.wallet_balance) ?? prev.walletBalance,
-            exp: payload.new.exp ?? prev.exp,
-            level: payload.new.level ?? prev.level,
-          }));
-          setIsSyncing(true);
-          setTimeout(() => setIsSyncing(false), 2000);
-        }
-      ).subscribe();
-    return () => { supabase.removeChannel(profileChannel); };
-  }, [isAuthenticated, user.id]);
 
   const fetchUserProfile = async (id: string, phone?: string) => {
     const { data, error } = await supabase.from('profiles').select('*').eq('id', id).single();
@@ -96,7 +79,7 @@ const App: React.FC = () => {
   if (isInitializing) return (
     <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-white">
       <Loader2 className="animate-spin text-blue-500 mb-4" size={40} />
-      <p className="text-[10px] font-black uppercase tracking-[0.4em]">Cargando QuestNet</p>
+      <p className="text-[10px] font-black uppercase tracking-[0.4em]">Sincronizando Perfil...</p>
     </div>
   );
 
@@ -105,7 +88,7 @@ const App: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen max-w-md mx-auto bg-white shadow-2xl relative font-inter">
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-100 px-4 py-3 flex justify-between items-center">
-        <div className="flex items-center gap-2" onClick={() => navigateTo(AppView.DASHBOARD)}>
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigateTo(AppView.DASHBOARD)}>
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
              <span className="text-white font-bold text-lg font-poppins">Q</span>
           </div>
@@ -113,8 +96,8 @@ const App: React.FC = () => {
         </div>
         <div className="flex items-center gap-3">
           {isSyncing && <RefreshCw size={12} className="text-blue-600 animate-spin" />}
-          <button onClick={() => navigateTo(AppView.WALLET)} className="bg-green-50 text-green-700 px-3 py-1.5 rounded-full text-xs font-bold border border-green-100">
-            <WalletIcon size={14} className="inline mr-1" />
+          <button onClick={() => navigateTo(AppView.WALLET)} className="bg-green-50 text-green-700 px-3 py-1.5 rounded-full text-xs font-bold border border-green-100 flex items-center">
+            <WalletIcon size={14} className="mr-1" />
             S/ {user.walletBalance.toFixed(2)}
           </button>
         </div>

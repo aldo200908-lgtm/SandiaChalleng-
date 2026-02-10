@@ -1,25 +1,20 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from '././App.tsx';
+import App from './App.tsx';
 
-console.log("QuestNet index.tsx: Iniciando montaje de React...");
+console.log("QuestNet: Cargando módulo principal...");
 
-const rootElement = document.getElementById('root');
-if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
-}
+const container = document.getElementById('root');
 
-try {
-  const root = ReactDOM.createRoot(rootElement);
+if (container) {
+  const root = ReactDOM.createRoot(container);
   root.render(
     <React.StrictMode>
       <App />
     </React.StrictMode>
   );
-  console.log("QuestNet index.tsx: Renderizado exitoso.");
-} catch (error) {
-  console.error("Error fatal durante el montaje de React:", error);
-  const loader = document.getElementById('loader-msg');
-  if (loader) loader.innerText = "Error de carga. Revisa la consola.";
+  console.log("QuestNet: React montado correctamente.");
+} else {
+  console.error("QuestNet: No se encontró el elemento #root");
 }
