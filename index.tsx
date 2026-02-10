@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
@@ -14,26 +13,30 @@ if (container) {
       </React.StrictMode>
     );
     
-    // Función para limpiar el loader inicial
+    // Función para limpiar el loader inicial suavemente
     const removeLoader = () => {
       const loader = document.getElementById('app-loader');
       if (loader) {
         loader.style.opacity = '0';
-        setTimeout(() => loader.remove(), 500);
+        setTimeout(() => loader.remove(), 600);
       }
     };
 
-    // Intentamos quitar el loader lo antes posible
+    // Quitamos el loader lo antes posible
     if (document.readyState === 'complete') {
       removeLoader();
     } else {
       window.addEventListener('load', removeLoader);
     }
     
-    // Fallback de seguridad por si el evento load no dispara
+    // Fallback de seguridad por si el evento load tarda demasiado
     setTimeout(removeLoader, 2000);
 
   } catch (err) {
-    console.error("Fallo crítico al montar React:", err);
+    console.error("Fallo crítico en el punto de entrada:", err);
+    const loaderMsg = document.getElementById('loader-msg');
+    if (loaderMsg) {
+      loaderMsg.innerText = "ERROR AL RENDERIZAR LA APP";
+    }
   }
 }

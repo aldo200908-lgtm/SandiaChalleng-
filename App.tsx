@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { AppView, User, Challenge } from './types.ts';
+import { AppView, User } from './types.ts';
 import BottomNav from './components/BottomNav.tsx';
 import Dashboard from './views/Dashboard.tsx';
 import Challenges from './views/Challenges.tsx';
@@ -10,7 +9,7 @@ import Auth from './views/Auth.tsx';
 import EarnSurveys from './views/EarnSurveys.tsx';
 import { MOCK_USER, MOCK_CHALLENGES } from './constants.tsx';
 import { AuthService } from './services/authService.ts';
-import { Wallet as WalletIcon, RefreshCw, Loader2 } from 'lucide-react';
+import { Wallet as WalletIcon, RefreshCw } from 'lucide-react';
 import { supabase } from './lib/supabaseClient.ts';
 
 const App: React.FC = () => {
@@ -23,19 +22,15 @@ const App: React.FC = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const sessionUser = await AuthService.getCurrentUser();
-        if (sessionUser) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
           setIsAuthenticated(true);
-          await fetchUserProfile(sessionUser.id, sessionUser.phone);
+          await fetchUserProfile(session.user.id, session.user.phone);
         }
       } catch (e) {
-        console.warn("QuestNet: Usuario no autenticado.");
+        console.warn("QuestNet: Sesión no encontrada.");
       } finally {
-        // Forzamos el fin de la carga de sistema
         setIsInitializing(false);
-        // Quitamos el loader de HTML puro para que no tape la app
-        const staticLoader = document.getElementById('app-loader');
-        if (staticLoader) staticLoader.remove();
       }
     };
 
@@ -60,8 +55,8 @@ const App: React.FC = () => {
         setUser({
           id: data.id,
           name: data.name || 'Explorador',
-          username: data.username || '@user',
-          avatar: data.avatar || MOCK_USER.avatar,
+          username: data.username || `@${data.name?.toLowerCase().replace(/\s/g, '_') || 'user'}`,
+          avatar: data.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${id}`,
           level: data.level || 1,
           exp: data.exp || 0,
           points: data.points || 0,
@@ -74,7 +69,7 @@ const App: React.FC = () => {
         });
       }
     } catch (e) {
-      console.error("Error al obtener perfil:", e);
+      console.error("Error al sincronizar perfil:", e);
     } finally {
       setIsSyncing(false);
     }
@@ -90,24 +85,27 @@ const App: React.FC = () => {
   if (!isAuthenticated) return <Auth onLogin={() => setIsAuthenticated(true)} />;
 
   return (
-    <div className="flex flex-col min-h-screen max-w-md mx-auto bg-white shadow-2xl relative font-inter animate-in fade-in duration-500">
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-lg border-b border-slate-100 px-4 py-3 flex justify-between items-center">
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigateTo(AppView.DASHBOARD)}>
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
-             <span className="text-white font-bold text-lg font-poppins">Q</span>
+    <div className="flex flex-col min-h-screen max-w-md mx-auto bg-white shadow-2xl relative font-inter overflow-x-hidden">
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-slate-100 px-4 py-4 flex justify-between items-center">
+        <div className="flex items-center gap-3 cursor-pointer group" onClick={() => navigateTo(AppView.DASHBOARD)}>
+          <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200 group-active:scale-90 transition-transform">
+             <span className="text-white font-black text-xl font-poppins">Q</span>
           </div>
-          <h1 className="text-xl font-bold font-poppins text-slate-800 tracking-tight">QuestNet</h1>
+          <h1 className="text-xl font-black font-poppins text-slate-900 tracking-tighter">QuestNet</h1>
         </div>
         <div className="flex items-center gap-3">
-          {isSyncing && <RefreshCw size={12} className="text-blue-600 animate-spin" />}
-          <button onClick={() => navigateTo(AppView.WALLET)} className="bg-green-50 text-green-700 px-3 py-1.5 rounded-full text-xs font-bold border border-green-100 flex items-center">
-            <WalletIcon size={14} className="mr-1" />
+          {isSyncing && <RefreshCw size={14} className="text-blue-600 animate-spin" />}
+          <button 
+            onClick={() => navigateTo(AppView.WALLET)} 
+            className="bg-slate-900 text-white px-4 py-2 rounded-full text-xs font-bold border border-slate-800 flex items-center gap-2 shadow-lg active:scale-95 transition-all"
+          >
+            <WalletIcon size={14} className="text-blue-400" />
             S/ {user.walletBalance.toFixed(2)}
           </button>
         </div>
       </header>
 
-      <main className="flex-grow pb-24 overflow-x-hidden">
+      <main className="flex-grow pb-28">
         {(() => {
           switch (currentView) {
             case AppView.DASHBOARD: return <Dashboard user={user} navigateTo={navigateTo} availableChallenges={MOCK_CHALLENGES} />;
