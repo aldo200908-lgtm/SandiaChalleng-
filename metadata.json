@@ -1,0 +1,8 @@
+{
+  "name": "QuestNet - Real World Challenges",
+  "description": "A gamified social platform where you complete real-world challenges for virtual rewards that convert to real money.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}
